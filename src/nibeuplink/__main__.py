@@ -26,6 +26,7 @@ parser.add_argument("--category", nargs="+")
 parser.add_argument("--status", action="store_true")
 parser.add_argument("--parameter", nargs="+", type=str)
 parser.add_argument("--put_parameter", nargs="+", type=pair)
+parser.add_argument("--put_menu_parameter", nargs="+", type=pair)
 parser.add_argument("--units", action="store_true")
 parser.add_argument("--alarms", action="store_true")
 parser.add_argument("--info", action="store_true")
@@ -72,7 +73,7 @@ def token_write(token):
 async def run():
 
     scope = ["READSYSTEM"]
-    if args.put_parameter or args.put_smarthome_mode:
+    if args.put_parameter or args.put_menu_parameter or args.put_smarthome_mode:
         scope.append("WRITESYSTEM")
 
     async with nibeuplink.UplinkSession(
@@ -133,6 +134,13 @@ async def run():
                     [
                         uplink.put_parameter(args.system, p[0], p[1])
                         for p in args.put_parameter
+                    ]
+                )
+            if args.put_menu_parameter:
+                todo.extend(
+                    [
+                        uplink.put_menu_setting(args.system, "4.1.1", p[0], p[1])
+                        for p in args.put_menu_parameter
                     ]
                 )
 

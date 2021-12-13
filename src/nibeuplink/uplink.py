@@ -178,6 +178,21 @@ class Uplink:
             )
         return result[0]["status"]
 
+    async def put_menu_setting(
+        self, system_id: int, menu_id, parameter_id: ParameterId, value: Any
+    ):
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+        } 
+
+        data = {"settings": {str(parameter_id): value}}
+        async with self.lock, self.throttle:
+            result = await self.put(
+                f"systems/{system_id}/menu/{menu_id}", json=data, headers=headers,
+            )
+        return result[0]["status"]
+
     async def get_system(self, system_id: int) -> System:
         _LOGGER.debug("Requesting system {}".format(system_id))
         async with self.lock, self.throttle:
